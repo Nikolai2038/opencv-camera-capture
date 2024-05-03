@@ -2,3 +2,6 @@
 
 # Results directory
 /output
+
+# Python virtual environment
+/venv

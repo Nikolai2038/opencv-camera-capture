@@ -8,6 +8,7 @@ services:
     volumes:
       - ./main.py:/app/main.py
       - ./output:/app/output
+      - ./input:/app/input
       - ./entrypoint.sh:/app/entrypoint.sh
       - ./requirements.txt:/app/requirements.txt
       # For GUI WSL pass
@@ -15,6 +16,7 @@ services:
       - /mnt/wslg:/mnt/wslg
       # Webcam passthrough
       - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
     environment:
       # For GUI WSL pass
       - DISPLAY
@@ -31,3 +33,4 @@ services:
               capabilities: [ gpu ]
     device_cgroup_rules:
       - 'c 81:* rmw'
+    privileged: true

@@ -28,7 +28,15 @@ RUN apt update && apt install -y python3-opencv
 
 # Install "tk" - for "tkinter" requirement
 RUN apt update && apt install -y python3-tk
+
+# For "pyaudio" requirement
+RUN apt update && apt install -y portaudio19-dev
 # ========================================
+
+# For webcam test
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+        fswebcam \
+        v4l-utils
 
 # ========================================
 # Install project
@@ -40,11 +48,6 @@ RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements.txt
 # Copy project files
 COPY ./main.py ./main.py
 # ========================================
-
-# For webcam test
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-        fswebcam \
-        v4l-utils
 
 COPY ./entrypoint.sh ./entrypoint.sh
 ENTRYPOINT ["bash", "./entrypoint.sh"]
