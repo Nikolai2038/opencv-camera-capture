@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: opencv-camera-capture
+    container_name: opencv-camera-capture
+    volumes:
+      - ./main.py:/app/main.py
+      - ./input:/app/input
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - ./requirements.txt:/app/requirements.txt
+      # For GUI WSL pass
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+    environment:
+      # For GUI WSL pass
+      - DISPLAY
+      - WAYLAND_DISPLAY
+      - XDG_RUNTIME_DIR
+      - PULSE_SERVER
+    # GPU passthrough
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
