@@ -2,7 +2,7 @@
 
 ## 1. Description
 
-Simple script to record video from camera in avi file
+Simple script to record video from camera in avi file.
 
 ## 2. Requirements
 
@@ -19,15 +19,10 @@ docker-compose build
 
 ```bash
 docker-compose up -d
-docker-compose exec -it app bash -c './main.py --image ./input/1.png --langs en,ru --gpu 1'
+docker-compose exec -it app bash -c './main.py'
 docker-compose down
 ```
 
-## 5. Example
-
-```bash
-./test.sh
-```
-
-When image pops up, do not close it - it will cause console to freeze.
-You just need to press any key to properly close the image. 
+- The camera output will be displayed and recording will start immediately;
+- The saved file will be `./output/result.avi`;
+- You can adjust brightness with trackbar.
