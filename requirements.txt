@@ -1,3 +1,4 @@
-easyocr
 opencv-python
-torch
+numpy
+pillow
+tk

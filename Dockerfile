@@ -25,6 +25,9 @@ RUN apt update && apt install -y python3-pip
 # Для избежания ошибки "ImportError: libGL.so.1: cannot open shared object file: No such file or directory" при работе с "cv2":
 # Install "opencv" for "cv2" requirement
 RUN apt update && apt install -y python3-opencv
+
+# Install "tk" - for "tkinter" requirement
+RUN apt update && apt install -y python3-tk
 # ========================================
 
 # ========================================
@@ -43,4 +46,6 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
         fswebcam \
         v4l-utils
 
+COPY ./entrypoint.sh ./entrypoint.sh
+ENTRYPOINT ["bash", "./entrypoint.sh"]
 CMD tail -f /dev/null

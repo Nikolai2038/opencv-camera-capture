@@ -1,64 +1,56 @@
 #!/usr/bin/env python3
 
-import argparse
-import easyocr
+# main.py
 import cv2
-import torch
+from tkinter import Tk, Button, Label, messagebox
+from PIL import Image, ImageTk
 
-# Настройка аргументов скрипта
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True, help="Путь к изображению")
-ap.add_argument("-l", "--langs", type=str, default="en", help="Список языков (сокращения), указанных через запятую (например: en,ru)")
-ap.add_argument("-g", "--gpu", type=bool, default=False, help="Использовать ли GPU (иначе - будет использоваться CPU)")
-args = vars(ap.parse_args())
 
-# Для исправления "CUDNN_STATUS_NOT_SUPPORTED" (при "paragraph=True")
-torch.backends.cudnn.enabled = False
+class VideoCapture:
+    label = Label(
+        width=32,
+        height=24,
+        bg="blue",
+        fg="yellow",
+    )
 
-# Получаем список языков
-langs = args["langs"].split(",")
-print("[INFO] Будет произведено распознавание следующих языков: {}".format(langs))
+    def __init__(self):
+        self.capture = cv2.VideoCapture(0)
+        self.video_writer = None
+        self.running = False
 
-# Загрузка изображения
-image = cv2.imread(args["image"])
+    def start_capture(self):
+        if not self.running:
+            self.running = True
+            self.video_writer = cv2.VideoWriter('./output/video.avi', cv2.VideoWriter_fourcc(*'XVID'), 30.0, (320, 240))
 
-print("[INFO] Распознавание...")
-# Применение OCR - Optical Character Recognition
-reader = easyocr.Reader(langs, gpu=args["gpu"])
-results = reader.readtext(image, detail=1, paragraph=False)
-print("[INFO] Распознавание успешно!")
+    def stop_capture(self):
+        if self.running:
+            self.running = False
+            self.video_writer.release()
 
-# Весь распознанный текст одной строкой
-all_text = ""
+    def update_preview(self):
+        ret, frame = self.capture.read()
+        if ret:
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.label.imgtk = imgtk
+            self.label.config(image=imgtk)
 
-# loop over the results
-for (bbox, text, prob) in results:
-    all_text += text + " "
 
-    # Пишем в лог распознанный текст, и его вероятность
-    print("[INFO] {:.4f}: {}".format(prob, text))
+root = Tk()
+vcapture = VideoCapture()
+vcapture.label.pack()
 
-    # Получаем координаты углов прямоугольника с распознанным текстом
-    (top_left, top_right, bottom_right, bottom_left) = bbox
-    top_left = (int(top_left[0]), int(top_left[1]))
-    top_right = (int(top_right[0]), int(top_right[1]))
-    bottom_right = (int(bottom_right[0]), int(bottom_right[1]))
-    bottom_left = (int(bottom_left[0]), int(bottom_left[1]))
+start_button = Button(root, text="Start", command=vcapture.start_capture)
+start_button.pack(side="left")
 
-    # Цвет выделения и текста
-    color = (255, 0, 255)
+stop_button = Button(root, text="Stop", command=vcapture.stop_capture)
+stop_button.pack(side="right")
 
-    # Толщина выделения и текста
-    thickness = 1
+exit_button = Button(root, text="Exit", command=root.destroy)
+exit_button.pack(side="bottom")
 
-    # Рисуем прямоугольник вокруг распознанного текста
-    cv2.rectangle(image, top_left, bottom_right, color, thickness)
-
-    # Рисуем сам текст
-    cv2.putText(image, text, (top_left[0], top_left[1] - 10), cv2.FONT_HERSHEY_COMPLEX, 0.5, color, thickness)
-
-print("[INFO] Распознанный текст целиком: " + all_text)
-
-# show the output image
-cv2.imshow("Image", image)
-cv2.waitKey(0)
+vcapture.update_preview()
+root.mainloop()

@@ -13,6 +13,8 @@ services:
       # For GUI WSL pass
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /mnt/wslg:/mnt/wslg
+      # Webcam passthrough
+      - /dev/video0:/dev/video0
     environment:
       # For GUI WSL pass
       - DISPLAY
@@ -27,3 +29,5 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [ gpu ]
+    device_cgroup_rules:
+      - 'c 81:* rmw'
