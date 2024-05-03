@@ -36,7 +36,11 @@ RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements.txt
 
 # Copy project files
 COPY ./main.py ./main.py
-COPY ./input ./input
 # ========================================
 
-CMD ./main.py
+# For webcam test
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+        fswebcam \
+        v4l-utils
+
+CMD tail -f /dev/null

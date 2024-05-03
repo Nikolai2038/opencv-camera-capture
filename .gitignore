@@ -1,1 +1,4 @@
 .idea
+
+# Results directory
+/output

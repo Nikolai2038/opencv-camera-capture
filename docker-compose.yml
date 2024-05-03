@@ -7,7 +7,7 @@ services:
     container_name: opencv-camera-capture
     volumes:
       - ./main.py:/app/main.py
-      - ./input:/app/input
+      - ./output:/app/output
       - ./entrypoint.sh:/app/entrypoint.sh
       - ./requirements.txt:/app/requirements.txt
       # For GUI WSL pass
